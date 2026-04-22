@@ -4,8 +4,6 @@ export default function Page() {
   return (
     <div>
       <p>Hello Next!</p>
-
-      <Navigation />
     </div>
   );
 }

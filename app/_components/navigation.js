@@ -5,6 +5,9 @@ export default function Navigation() {
     <div>
       <ul>
         <li>
+          <Link href={'/cabins'}>Home</Link>
+        </li>
+        <li>
           <Link href={'/cabins'}>Cabins</Link>
         </li>
         <li>
