@@ -1,4 +1,5 @@
-import { getCabin } from '@/app/_lib/data-service';
+import TextExpander from '@/app/_components/TextExpander';
+import { getCabin, getCabins } from '@/app/_lib/data-service';
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 
@@ -14,6 +15,17 @@ import Image from 'next/image';
 //   image:
 //     'https://dclaevazetcjjkrzczpc.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg',
 // };
+
+//generate cabinId's
+export async function generateStaticParams() {
+  const cabins = await getCabins();
+
+  const ids = cabins.map((cabin) => ({
+    cabinId: String(cabin.id),
+  }));
+
+  return ids;
+}
 
 //generate dynamic meta data
 export async function generateMetadata({ params }) {
@@ -45,8 +57,7 @@ export default async function Page({ params }) {
             Cabin {name}
           </h3>
 
-          <p className="mb-10 text-lg text-primary-300">{description}</p>
-
+          <TextExpander>{description}</TextExpander>
           <ul className="flex flex-col gap-4 mb-7">
             <li className="flex items-center gap-3">
               <UsersIcon className="w-5 h-5 text-primary-600" />
