@@ -3,6 +3,7 @@
 import { isWithinInterval } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
+import { useReservation } from './ReservationContext';
 
 function isAlreadyBooked(range, datesArr) {
   return (
@@ -14,30 +15,35 @@ function isAlreadyBooked(range, datesArr) {
   );
 }
 
-function DateSelector() {
+function DateSelector({ settings, cabin, bookedDate }) {
+  const { range, setRange, resetRange } = useReservation();
+
+  console.log(range);
+
   // CHANGE
   const regularPrice = 23;
   const discount = 23;
   const numNights = 23;
   const cabinPrice = 23;
-  const range = { from: null, to: null };
+  // const range = { from: null, to: null };
 
   // SETTINGS
-  const minBookingLength = 1;
-  const maxBookingLength = 23;
+  const { minBookingLength, maxBookingLength } = settings;
 
   return (
     <div className="flex flex-col justify-between">
       <DayPicker
-        className="pt-12 place-self-center"
+        className={`pt-12 place-self-center `}
         styles={{
           months: { width: '30rem' },
           day: { width: '32px', height: '32px' },
-          day_button: { width: '30px', height: '30px' },
+          day_button: { width: '30px', height: '30px', hover: 'bg-accent-500' },
         }}
         mode="range"
         min={minBookingLength + 1}
         max={maxBookingLength}
+        onSelect={setRange}
+        selected={range}
         // fromMonth={new Date()}
         // fromDate={new Date()}
         // toYear={new Date().getFullYear() + 5}
@@ -79,7 +85,7 @@ function DateSelector() {
         {range.from || range.to ? (
           <button
             className="px-4 py-2 text-sm font-semibold border border-primary-800"
-            onClick={() => resetRange()}
+            onClick={resetRange}
           >
             Clear
           </button>
