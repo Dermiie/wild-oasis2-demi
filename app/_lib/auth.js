@@ -30,10 +30,9 @@ const authConfig = {
     },
 
     async session({ session, user }) {
-      console.log(session);
       const guest = await getGuest(session.user.email);
 
-      session.user.id = guest.id; //Add the newly created guestId to our session.user object
+      session.user.guestId = guest.id; //Add the newly created guestId to our session.user object
 
       return session; //Always return session to avoid "no more session" error
     },
