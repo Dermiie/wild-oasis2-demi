@@ -16,13 +16,12 @@ function ReservationForm({ cabin, user, bookingId }) {
         <p>Logged in as</p>
 
         <div className="relative flex items-center gap-4">
-          <Image
+          <img
             // Important to display google profile images
             referrerPolicy="no-referrer"
             className="object-cover h-8 rounded-full"
             src={user.image || ''}
             alt={user.name}
-            fill
           />
           <p>{user.name}</p>
         </div>
@@ -32,13 +31,14 @@ function ReservationForm({ cabin, user, bookingId }) {
         className="flex flex-col gap-5 px-16 py-10 text-lg bg-primary-900"
         action={updateReservation}
       >
+        <input hidden defaultValue={bookingId ?? null} name="bookingId" />
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
             name="numGuests"
+            defaultValue={numGuests}
             id="numGuests"
             className="w-full px-5 py-3 rounded-sm shadow-sm bg-primary-200 text-primary-800"
-            defaultValue={numGuests}
             required
           >
             <option value="" key="">
@@ -51,7 +51,6 @@ function ReservationForm({ cabin, user, bookingId }) {
             ))}
           </select>
         </div>
-        <input hidden defaultValue={bookingId ?? null} name="bookingId" />
 
         <div className="space-y-2">
           <label htmlFor="observations">

@@ -12,6 +12,9 @@ export default async function Page({ params }) {
 
   return (
     <div>
+      <h2 className="text-2xl font-semibold text-accent-400 mb-7">
+        Edit Reservation #{bookingId}
+      </h2>
       <ReservationForm cabin={cabin} user={guest} bookingId={bookingId} />
     </div>
   );
