@@ -1,4 +1,5 @@
 import ReservationForm from '@/app/_components/ReservationForm';
+import { updateReservation } from '@/app/_lib/actions';
 import { auth } from '@/app/_lib/auth';
 import { getBooking, getCabin, getGuest } from '@/app/_lib/data-service';
 
@@ -15,7 +16,14 @@ export default async function Page({ params }) {
       <h2 className="text-2xl font-semibold text-accent-400 mb-7">
         Edit Reservation #{bookingId}
       </h2>
-      <ReservationForm cabin={cabin} user={guest} bookingId={bookingId} />
+      <ReservationForm
+        cabin={cabin}
+        user={guest}
+        reservation={reservation}
+        bookingId={bookingId}
+        action={updateReservation}
+        actionType={'updateReservation'}
+      />
     </div>
   );
 }

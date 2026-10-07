@@ -20,10 +20,10 @@ function isAlreadyBooked(range, datesArr) {
   );
 }
 
-function DateSelector({ settings, cabin, bookedDate }) {
+function DateSelector({ settings, cabin, bookedDates }) {
   const { range, setRange, resetRange } = useReservation();
 
-  const displayRange = isAlreadyBooked(range, bookedDate) ? {} : range;
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
 
   const { regularPrice, discount } = cabin;
   const numNights = differenceInDays(displayRange.to, displayRange.from);
@@ -55,7 +55,7 @@ function DateSelector({ settings, cabin, bookedDate }) {
         numberOfMonths={2}
         disabled={(curDate) =>
           isPast(curDate) ||
-          bookedDate?.some((date) => isSameDay(date, curDate))
+          bookedDates?.some((date) => isSameDay(date, curDate))
         }
       />
 

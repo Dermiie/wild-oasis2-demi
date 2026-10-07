@@ -1,21 +1,35 @@
-export default function Page() {
-  // CHANGE
-  const reservationId = 23;
-  const maxCapacity = 23;
+import { updateReservation } from '@/app/_lib/actions';
+import { auth } from '@/app/_lib/auth';
+import { getBooking, getCabin, getGuest } from '@/app/_lib/data-service';
+
+export default async function Page({ params }) {
+  const bookingId = params.bookingId;
+  const session = await auth();
+
+  const guest = await getGuest(session.user.email);
+  const reservation = await getBooking(bookingId);
+  const cabin = await getCabin(reservation.cabinId);
+  // // CHANGE
+  // const reservationId = 23;
+  // const maxCapacity = 23;
 
   return (
     <div>
-      <h2 className="font-semibold text-2xl text-accent-400 mb-7">
-        Edit Reservation #{reservationId}
+      <h2 className="text-2xl font-semibold text-accent-400 mb-7">
+        Edit Reservation #{bookingId}
       </h2>
 
-      <form className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
+      <form
+        className="flex flex-col gap-6 px-12 py-8 text-lg bg-primary-900"
+        action={updateReservation}
+      >
+        <input hidden defaultValue={bookingId ?? null} name="bookingId" />
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
             name="numGuests"
             id="numGuests"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full px-5 py-3 rounded-sm shadow-sm bg-primary-200 text-primary-800"
             required
           >
             <option value="" key="">
@@ -23,7 +37,7 @@ export default function Page() {
             </option>
             {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
               <option value={x} key={x}>
-                {x} {x === 1 ? "guest" : "guests"}
+                {x} {x === 1 ? 'guest' : 'guests'}
               </option>
             ))}
           </select>
@@ -35,12 +49,12 @@ export default function Page() {
           </label>
           <textarea
             name="observations"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full px-5 py-3 rounded-sm shadow-sm bg-primary-200 text-primary-800"
           />
         </div>
 
-        <div className="flex justify-end items-center gap-6">
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
+        <div className="flex items-center justify-end gap-6">
+          <button className="px-8 py-4 font-semibold transition-all bg-accent-500 text-primary-800 hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
             Update reservation
           </button>
         </div>

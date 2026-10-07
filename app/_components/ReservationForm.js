@@ -1,19 +1,47 @@
 'use client';
 
 import Image from 'next/image';
-import { updateReservation } from '../_lib/actions';
+// import { updateReservation } from '../_lib/actions';
 import { useReservation } from './ReservationContext';
 import { useFormStatus } from 'react-dom';
+import { differenceInDays } from 'date-fns';
 
-function ReservationForm({ cabin, user, bookingId }) {
+function ReservationForm({
+  cabin,
+  user,
+  bookingId,
+  action,
+  actionType,
+  reservation,
+}) {
   // CHANGE
-  const { maxCapacity, observations, numGuests } = cabin;
-  const { range } = useReservation();
+  const { maxCapacity, regularPrice, discount, id } = cabin;
+  const { range, resetRange } = useReservation();
+
+  const { numGuests, observations } = reservation ?? {};
+
+  const { to: endDate, from: startDate } = range ?? {};
+  const numNights =
+    startDate && endDate ? differenceInDays(endDate, startDate) : 0;
+  const cabinPrice = numNights * (regularPrice - discount);
+
+  const bookingData = {
+    startDate,
+    endDate,
+    numNights,
+    cabinPrice,
+    cabinId: id,
+  };
+
+  const formAction =
+    actionType === 'createReservation'
+      ? action.bind(null, bookingData)
+      : action;
 
   return (
     <div className="scale-[1.01]">
       <div className="flex items-center justify-between px-16 py-2 bg-primary-800 text-primary-300">
-        <p>Logged in as</p>
+        <p>Logged in as </p>
 
         <div className="relative flex items-center gap-4">
           <img
@@ -29,14 +57,18 @@ function ReservationForm({ cabin, user, bookingId }) {
 
       <form
         className="flex flex-col gap-5 px-16 py-10 text-lg bg-primary-900"
-        action={updateReservation}
+        // action={formAction}
+        action={async (formData) => {
+          await formAction(formData);
+          resetRange();
+        }}
       >
         <input hidden defaultValue={bookingId ?? null} name="bookingId" />
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
             name="numGuests"
-            defaultValue={numGuests}
+            defaultValue={numGuests ?? 0}
             id="numGuests"
             className="w-full px-5 py-3 rounded-sm shadow-sm bg-primary-200 text-primary-800"
             required
@@ -60,15 +92,17 @@ function ReservationForm({ cabin, user, bookingId }) {
             name="observations"
             id="observations"
             className="w-full px-5 py-3 rounded-sm shadow-sm bg-primary-200 text-primary-800"
-            defaultValue={observations}
+            defaultValue={observations ?? ''}
             placeholder="Any pets, allergies, special requirements, etc.?"
           />
         </div>
 
-        <div className="flex items-center justify-end gap-6">
+        <div className="flex items-center justify-end gap-6"></div>
+        {actionType === 'createReservation' && !(startDate && endDate) ? (
           <p className="text-base text-primary-300">Start by selecting dates</p>
-        </div>
-        <Button />
+        ) : (
+          <Button />
+        )}
       </form>
     </div>
   );
