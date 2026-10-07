@@ -1,6 +1,11 @@
 'use client';
 
-import { isWithinInterval } from 'date-fns';
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { useReservation } from './ReservationContext';
@@ -9,7 +14,7 @@ function isAlreadyBooked(range, datesArr) {
   return (
     range.from &&
     range.to &&
-    datesArr.some((date) =>
+    datesArr?.some((date) =>
       isWithinInterval(date, { start: range.from, end: range.to }),
     )
   );
@@ -18,13 +23,12 @@ function isAlreadyBooked(range, datesArr) {
 function DateSelector({ settings, cabin, bookedDate }) {
   const { range, setRange, resetRange } = useReservation();
 
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
-  // const range = { from: null, to: null };
+  const displayRange = isAlreadyBooked(range, bookedDate) ? {} : range;
 
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(displayRange.to, displayRange.from);
+
+  const cabinPrice = numNights * (regularPrice - discount);
   // SETTINGS
   const { minBookingLength, maxBookingLength } = settings;
 
@@ -41,7 +45,7 @@ function DateSelector({ settings, cabin, bookedDate }) {
         min={minBookingLength + 1}
         max={maxBookingLength}
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         // fromMonth={new Date()}
         // fromDate={new Date()}
         // toYear={new Date().getFullYear() + 5}
@@ -49,7 +53,10 @@ function DateSelector({ settings, cabin, bookedDate }) {
         endMonth={new Date(new Date().getFullYear(), 5 * 12)}
         captionLayout="dropdown"
         numberOfMonths={2}
-        disabled={{ before: new Date() }}
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDate?.some((date) => isSameDay(date, curDate))
+        }
       />
 
       <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
